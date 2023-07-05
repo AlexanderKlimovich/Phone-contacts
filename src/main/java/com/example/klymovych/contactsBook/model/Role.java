@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.util.List;
 
 @Entity
 @Data
@@ -13,4 +14,6 @@ public class Role extends BaseModel {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
+    private List<User> users;
 }
