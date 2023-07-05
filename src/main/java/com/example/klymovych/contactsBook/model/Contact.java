@@ -19,9 +19,9 @@ public class Contact extends BaseModel{
     @JoinColumn(name = "owner_id")
     private User owner;
 
-    @OneToMany(mappedBy = "email_id", cascade = CascadeType.REMOVE)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "contact")
     private List<Email> emails;
 
-    @OneToMany(mappedBy = "phone_id", cascade = CascadeType.REMOVE)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "contact")
     private List<Phone> phones;
 }

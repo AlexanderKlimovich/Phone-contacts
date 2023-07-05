@@ -13,4 +13,8 @@ public class Email extends BaseModel {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
+    @ManyToOne
+    @JoinColumn(name = "contact_id")
+    private Contact contact;
+
 }

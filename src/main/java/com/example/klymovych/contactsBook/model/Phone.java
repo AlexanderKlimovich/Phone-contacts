@@ -13,4 +13,8 @@ public class Phone extends BaseModel {
             message = "Must be minimum 12 symbols long and start from +")
     @Column(name = "phone", nullable = false, unique = true)
     private String phone;
+
+    @ManyToOne
+    @JoinColumn(name = "contact_id")
+    private Contact contact;
 }
