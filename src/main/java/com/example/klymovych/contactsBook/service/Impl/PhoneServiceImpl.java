@@ -20,8 +20,14 @@ public class PhoneServiceImpl implements PhoneService {
     @Override
     public Phone create(Phone phone) {
         if (phone != null) {
-            log.info("Creating phone: {}", phone);
-            return phoneRepository.save(phone);
+            Phone phoneFromDb = phoneRepository.findByPhoneNumber(phone.getPhoneNumber());
+                if (phoneFromDb == null) {
+                    log.info("Creating phone: {}", phone);
+                    return phoneRepository.save(phone);
+                } else {
+                    log.info("Return phone from db");
+                    return phoneFromDb;
+                }
         }
         throw new NullEntityReferenceException("Phone cannot be 'null'");
     }

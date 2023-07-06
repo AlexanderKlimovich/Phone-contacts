@@ -24,7 +24,7 @@ public class ContactResponse {
                 .map(Email::getName)
                 .collect(Collectors.toList()));
         contactResponse.setPhones(contact.getPhones().stream()
-                .map(Phone::getPhone)
+                .map(Phone::getPhoneNumber)
                 .collect(Collectors.toList()));
         return contactResponse;
     }

@@ -20,9 +20,15 @@ public class EmailServiceImpl implements EmailService {
     private final EmailRepository emailRepository;
     @Override
     public Email create(Email email) {
-        if (email != null) {
-            log.info("Creating email: {}", email);
-            return emailRepository.save(email);
+        if (email != null ) {
+            Email emailFromDb = emailRepository.findByEmail(email.getName());
+            if (emailFromDb == null) {
+                log.info("Creating email: {}", email);
+                return emailRepository.save(email);
+            } else {
+                log.info("Return email from db");
+                return emailFromDb;
+            }
         }
         throw new NullEntityReferenceException("Email cannot be 'null'");
     }
