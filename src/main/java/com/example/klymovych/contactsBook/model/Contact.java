@@ -18,9 +18,15 @@ public class Contact extends BaseModel{
     @JoinColumn(name = "owner_id")
     private User owner;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "contact")
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "contact_emails",
+            joinColumns = @JoinColumn(name = "contact_id"),
+            inverseJoinColumns = @JoinColumn(name = "email_id"))
     private List<Email> emails;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "contact")
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "contact_phones",
+            joinColumns = @JoinColumn(name = "contact_id"),
+            inverseJoinColumns = @JoinColumn(name = "phone_id"))
     private List<Phone> phones;
 }

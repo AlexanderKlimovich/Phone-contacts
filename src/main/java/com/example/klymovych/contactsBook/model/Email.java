@@ -4,6 +4,8 @@ import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @Entity
 @Table(name = "emails")
@@ -13,8 +15,7 @@ public class Email extends BaseModel {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "contact_id")
-    private Contact contact;
+    @ManyToMany(mappedBy = "emails")
+    private List<Contact> contacts;
 
 }
