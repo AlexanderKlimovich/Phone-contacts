@@ -4,11 +4,11 @@ import com.example.klymovych.contactsBook.exception.NullEntityReferenceException
 import com.example.klymovych.contactsBook.model.Role;
 import com.example.klymovych.contactsBook.repository.RoleRepository;
 import com.example.klymovych.contactsBook.service.RoleService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Service
@@ -30,7 +30,7 @@ public class RoleServiceImpl implements RoleService {
     public Role readById(long id) {
         log.info("Fetching role by id: {}", id);
         return roleRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Role with id " + id + " not found"));
+                () -> new EntityNotFoundException(("Role with id " + id + " not found")));
     }
 
     @Override

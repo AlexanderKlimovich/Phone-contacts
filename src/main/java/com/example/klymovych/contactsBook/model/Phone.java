@@ -1,7 +1,7 @@
 package com.example.klymovych.contactsBook.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.Pattern;
+import javax.persistence.*;
+import javax.validation.constraints.Pattern;
 import lombok.Data;
 
 @Data

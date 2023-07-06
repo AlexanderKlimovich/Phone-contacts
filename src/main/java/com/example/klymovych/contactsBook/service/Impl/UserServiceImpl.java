@@ -1,30 +1,60 @@
 package com.example.klymovych.contactsBook.service.Impl;
 
+import com.example.klymovych.contactsBook.dto.RegistrationUserDto;
 import com.example.klymovych.contactsBook.exception.NullEntityReferenceException;
+import com.example.klymovych.contactsBook.model.Role;
+import com.example.klymovych.contactsBook.model.Status;
+import com.example.klymovych.contactsBook.repository.RoleRepository;
 import com.example.klymovych.contactsBook.repository.UserRepository;
 import com.example.klymovych.contactsBook.service.UserService;
 import com.example.klymovych.contactsBook.model.User;
-import jakarta.persistence.EntityNotFoundException;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import javax.persistence.EntityNotFoundException;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
+
 @Slf4j
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
 
+    private final RoleRepository roleRepository;
+
+
+    @Autowired
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+    }
+
     @Override
-    public User create(User user) {
-        if (user != null) {
-            log.info("Creating user: {}", user);
-            return userRepository.save(user);
-        }
-        throw new NullEntityReferenceException("User cannot be 'null'");
+    public User create(RegistrationUserDto userDto) {
+        Role roleUser = roleRepository.findByName("ROLE_USER");
+        List<Role> userRoles = new ArrayList<>();
+        userRoles.add(roleUser);
+
+        User user = new User();
+
+        user.setUsername(userDto.getUsername());
+        user.setEmail(userDto.getEmail());
+        user.setPassword(userDto.getPassword());
+        user.setRoles(userRoles);
+        user.setStatus(Status.ACTIVE);
+
+        User registeredUser = userRepository.save(user);
+
+        log.info("IN register - user: {} successfully registered", registeredUser);
+
+        return registeredUser;
     }
 
     @Override
@@ -55,5 +85,15 @@ public class UserServiceImpl implements UserService {
     public List<User> getAll() {
         log.info("Fetching all users");
         return userRepository.findAll();
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(username);
+        return new org.springframework.security.core.userdetails.User(
+                user.getEmail(),
+                user.getPassword(),
+                user.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList())
+        );
     }
 }

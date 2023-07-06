@@ -4,7 +4,7 @@ import com.example.klymovych.contactsBook.exception.NullEntityReferenceException
 import com.example.klymovych.contactsBook.model.Contact;
 import com.example.klymovych.contactsBook.repository.ContactRepository;
 import com.example.klymovych.contactsBook.service.ContactService;
-import jakarta.persistence.EntityNotFoundException;
+import javax.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
