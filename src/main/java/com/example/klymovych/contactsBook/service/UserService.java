@@ -13,4 +13,6 @@ public interface UserService extends UserDetailsService {
     void delete(long id);
     List<User> getAll();
 
+    public User findByEmail(String email);
+
 }

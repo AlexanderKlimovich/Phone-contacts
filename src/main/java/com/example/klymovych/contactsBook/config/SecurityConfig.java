@@ -2,9 +2,7 @@ package com.example.klymovych.contactsBook.config;
 
 
 import com.example.klymovych.contactsBook.security.jwt.JwtRequestFilter;
-import com.example.klymovych.contactsBook.service.Impl.UserServiceImpl;
 import com.example.klymovych.contactsBook.service.UserService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
@@ -40,7 +38,7 @@ public class SecurityConfig {
                 .csrf().disable()
                 .cors().disable()
                 .authorizeRequests()
-                .antMatchers("/login").permitAll()
+                .antMatchers("/auth").permitAll()
                 .antMatchers("/accessDenied").permitAll()
                 .antMatchers("/registration").permitAll()
                 .anyRequest().authenticated()
