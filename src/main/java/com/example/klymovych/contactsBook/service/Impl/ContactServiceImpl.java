@@ -1,15 +1,25 @@
 package com.example.klymovych.contactsBook.service.Impl;
 
+import com.example.klymovych.contactsBook.dto.ContactRequest;
 import com.example.klymovych.contactsBook.exception.NullEntityReferenceException;
 import com.example.klymovych.contactsBook.model.Contact;
+import com.example.klymovych.contactsBook.model.Phone;
+import com.example.klymovych.contactsBook.model.User;
+import com.example.klymovych.contactsBook.model.Email;
 import com.example.klymovych.contactsBook.repository.ContactRepository;
 import com.example.klymovych.contactsBook.service.ContactService;
 import javax.persistence.EntityNotFoundException;
+
+import com.example.klymovych.contactsBook.service.EmailService;
+import com.example.klymovych.contactsBook.service.PhoneService;
+import com.example.klymovych.contactsBook.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -17,6 +27,13 @@ import java.util.List;
 public class ContactServiceImpl implements ContactService {
 
     private final ContactRepository contactRepository;
+
+    private final UserService userService;
+
+    private final EmailService emailService;
+
+    private final PhoneService phoneService;
+
 
     @Override
     public Contact create(Contact contact) {
@@ -55,5 +72,49 @@ public class ContactServiceImpl implements ContactService {
     public List<Contact> getAll() {
         log.info("Fetching all contacts");
         return contactRepository.findAll();
+    }
+
+    @Override
+    public List<Contact> getAllByOwner(Principal principal) {
+        User user = userService.findByEmail(principal.getName());
+        return contactRepository.findAllByOwnerId(user.getId());
+    }
+
+    @Override
+    public Contact createContactFromContactRequest(ContactRequest contactRequest, Principal principal){
+        Contact contact = new Contact();
+        contact.setName(contactRequest.getName());
+
+        User owner = userService.findByEmail(principal.getName());
+        contact.setOwner(owner);
+
+        Contact savedContact = contactRepository.save(contact);
+
+        List<Email> emails = contactRequest.getEmails().stream()
+                .map(email -> {
+                    Email emailObj = new Email();
+                    emailObj.setName(email);
+                    emailObj.setContact(savedContact);
+                    return emailObj;
+                })
+                .collect(Collectors.toList());
+
+        List<Phone> phones = contactRequest.getPhones().stream()
+                .map(phone -> {
+                    Phone phoneObj = new Phone();
+                    phoneObj.setPhone(phone);
+                    phoneObj.setContact(savedContact);
+                    return phoneObj;
+                })
+                .collect(Collectors.toList());
+
+        emails.forEach(emailService::create);
+        phones.forEach(phoneService::create);
+
+        savedContact.setEmails(emails);
+        savedContact.setPhones(phones);
+
+        return update(savedContact);
+
     }
 }
