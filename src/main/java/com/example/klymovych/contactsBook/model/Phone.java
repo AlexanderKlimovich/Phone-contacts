@@ -18,4 +18,10 @@ public class Phone extends BaseModel {
 
     @ManyToMany(mappedBy = "phones")
     private List<Contact> contacts;
+
+    public void saveContact (Contact contact){
+        if(!contacts.contains(contact)) {
+            this.contacts.add(contact);
+        }
+    }
 }
