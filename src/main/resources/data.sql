@@ -3,6 +3,8 @@ INSERT INTO roles (id, name) VALUES (2, 'USER');
 
 INSERT INTO users (id, username, email, password, role_id) VALUES (5, 'Nick', 'nick@mail.com', '$2y$16$Nqle7jBFUektjiBrKAyHieT9ii22A1s4Sz8sI0dYYa.vKPvHNmxF6', 2);
 INSERT INTO users (id, username, email, password, role_id) VALUES (6, 'Nora', 'nora@mail.com', '$2y$16$713Dl0H9ngj6ETvXJLaEFuSBXPc5DEqiGoVC8aTh7QaCCcaAAfkmO', 1);
+--Nick password: passwordNick123
+--Nora password: passwordNora123
 
 INSERT INTO contacts (id, name, owner_id) VALUES (1, 'Contact 1', 5);
 INSERT INTO contacts (id, name, owner_id) VALUES (2, 'Contact 2', 5);

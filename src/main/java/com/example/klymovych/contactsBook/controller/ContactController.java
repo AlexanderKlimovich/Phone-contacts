@@ -38,7 +38,7 @@ public class ContactController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{id}")
+    @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
     public ResponseEntity<ContactResponse> updateContact(@PathVariable Long id,
                                                          @RequestBody ContactRequest contactRequest,
