@@ -21,7 +21,7 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public Email create(Email email) {
         if (email != null ) {
-            Email emailFromDb = emailRepository.findByEmail(email.getName());
+            Email emailFromDb = emailRepository.findByName(email.getName());
             if (emailFromDb == null) {
                 log.info("Creating email: {}", email);
                 return emailRepository.save(email);

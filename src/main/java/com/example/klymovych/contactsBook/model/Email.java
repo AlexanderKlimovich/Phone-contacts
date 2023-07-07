@@ -18,4 +18,10 @@ public class Email extends BaseModel {
     @ManyToMany(mappedBy = "emails")
     private List<Contact> contacts;
 
+    public void saveContact (Contact contact) {
+        if(!contacts.contains(contact)) {
+            this.contacts.add(contact);
+        }
+    }
+
 }
