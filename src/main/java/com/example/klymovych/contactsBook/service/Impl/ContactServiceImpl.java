@@ -77,11 +77,14 @@ public class ContactServiceImpl implements ContactService {
     @Override
     public List<Contact> getAllByOwner(Principal principal) {
         User user = userService.findByEmail(principal.getName());
+        log.info("Fetching all contacts from one user");
         return contactRepository.findAllByOwnerId(user.getId());
     }
 
     @Override
     public Contact createContactFromContactRequest(ContactRequest contactRequest, Principal principal){
+        log.info("Creating contact from contact request: {}", contactRequest);
+
         Contact contact = new Contact();
         contact.setName(contactRequest.getName());
 
@@ -94,7 +97,7 @@ public class ContactServiceImpl implements ContactService {
                 .map(email -> {
                     Email emailObj = new Email();
                     emailObj.setName(email);
-                    emailObj.setContact(savedContact);
+                    emailObj.saveContact(savedContact);
                     return emailObj;
                 })
                 .collect(Collectors.toList());
@@ -102,8 +105,8 @@ public class ContactServiceImpl implements ContactService {
         List<Phone> phones = contactRequest.getPhones().stream()
                 .map(phone -> {
                     Phone phoneObj = new Phone();
-                    phoneObj.setPhone(phone);
-                    phoneObj.setContact(savedContact);
+                    phoneObj.setPhoneNumber(phone);
+                    phoneObj.saveContact(savedContact);
                     return phoneObj;
                 })
                 .collect(Collectors.toList());
@@ -114,7 +117,11 @@ public class ContactServiceImpl implements ContactService {
         savedContact.setEmails(emails);
         savedContact.setPhones(phones);
 
-        return update(savedContact);
+        Contact updatedContact = update(savedContact);
+
+        log.info("Contact created: {}", updatedContact);
+
+        return updatedContact;
 
     }
 }
