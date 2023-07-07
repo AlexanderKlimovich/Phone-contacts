@@ -11,7 +11,7 @@ import java.util.List;
 @Table(name = "contacts")
 public class Contact extends BaseModel{
     @NotBlank(message = "The 'name' cannot be empty")
-    @Column(name = "name")
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
     @ManyToOne
