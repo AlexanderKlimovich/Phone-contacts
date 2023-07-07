@@ -10,29 +10,36 @@ import com.example.klymovych.contactsBook.service.UserService;
 import com.example.klymovych.contactsBook.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class UserServiceImpl implements UserService{
 
-    private final UserRepository userRepository;
+    private UserRepository userRepository;
 
-    private final RoleRepository roleRepository;
+    private RoleRepository roleRepository;
+
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository) {
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, @Lazy PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
+
 
     @Override
     public User create(RegistrationUserDto userDto) {
@@ -44,7 +51,7 @@ public class UserServiceImpl implements UserService{
 
         user.setUsername(userDto.getUsername());
         user.setEmail(userDto.getEmail());
-        user.setPassword(userDto.getPassword());
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         user.setRoles(userRoles);
         user.setStatus(Status.ACTIVE);
 
@@ -86,14 +93,15 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public User findByEmail(String email){
+    public Optional<User> findByEmail(String email){
         log.info("Fetching user by email: {}", email);
         return userRepository.findByEmail(email);
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(username);
+        User user = userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException(
+                String.format("User '%s' not found", username)));
         log.info("Fetching user by username: {}", username);
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
