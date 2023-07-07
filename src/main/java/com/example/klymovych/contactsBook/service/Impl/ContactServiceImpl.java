@@ -15,6 +15,7 @@ import com.example.klymovych.contactsBook.service.PhoneService;
 import com.example.klymovych.contactsBook.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
@@ -76,7 +77,8 @@ public class ContactServiceImpl implements ContactService {
 
     @Override
     public List<Contact> getAllByOwner(Principal principal) {
-        User user = userService.findByEmail(principal.getName());
+        User user = userService.findByEmail(principal.getName()).orElseThrow(() -> new UsernameNotFoundException(
+                String.format("User '%s' not found", principal.getName())));
         log.info("Fetching all contacts from one user");
         return contactRepository.findAllByOwnerId(user.getId());
     }
@@ -88,7 +90,8 @@ public class ContactServiceImpl implements ContactService {
         Contact contact = new Contact();
         contact.setName(contactRequest.getName());
 
-        User owner = userService.findByEmail(principal.getName());
+        User owner = userService.findByEmail(principal.getName()).orElseThrow(() -> new UsernameNotFoundException(
+                String.format("User '%s' not found", principal.getName())));
         contact.setOwner(owner);
 
         Contact savedContact = contactRepository.save(contact);

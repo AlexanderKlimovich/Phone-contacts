@@ -1,6 +1,5 @@
 package com.example.klymovych.contactsBook.config;
 
-
 import com.example.klymovych.contactsBook.security.jwt.JwtRequestFilter;
 import com.example.klymovych.contactsBook.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,6 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
-
 @EnableGlobalMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
     private UserService userService;
@@ -31,28 +29,14 @@ public class SecurityConfig {
         this.jwtRequestFilter = jwtRequestFilter;
     }
 
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
                 .cors().disable()
                 .authorizeRequests()
-                .antMatchers("/auth").permitAll()
-                .antMatchers("/accessDenied").permitAll()
-                .antMatchers("/registration").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .formLogin()
-                .loginPage("/login")
-                .failureUrl("/login?error=true")
-                .permitAll()
-                .and()
-                .logout()
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/login?logout=true")
-                .invalidateHttpSession(true)
-                .permitAll()
+                .antMatchers("/api/v1/contacts/**").authenticated()
+                .anyRequest().permitAll()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()

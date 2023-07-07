@@ -54,10 +54,10 @@ public class AuthService {
             return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(),
                     "Password mismatch"), HttpStatus.BAD_REQUEST);
         }
-        if (userService.loadUserByUsername(registrationUserDto.getEmail()) != null) {
+        if (userService.findByEmail(registrationUserDto.getEmail()).isPresent()) {
             log.error("User with the given name or login already exists: {}", registrationUserDto.getEmail());
             return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(),
-                    "User with the given name or login already exists"), HttpStatus.BAD_REQUEST);
+                    "User with the given email already exists"), HttpStatus.BAD_REQUEST);
         }
         User user = userService.create(registrationUserDto);
         log.info("User created: {}", user.getEmail());
